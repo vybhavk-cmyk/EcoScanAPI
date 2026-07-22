@@ -1,17 +1,237 @@
 # 🌍 EcoScan - Clothing Carbon Footprint Scanner
 
 ## 📜 Overview
-EcoScan is a web application designed to help users understand the environmental impact of their clothing purchases. Users can select one or more clothing items, view their estimated carbon footprint, earn eco-reward points, and redeem sustainability-focused offers. This project demonstrates a full-stack solution for promoting environmentally conscious purchasing decisions.
 
-## 🔧 Tech Stack
-- **Frontend:** React (Vite)
-- **Backend:** ASP.NET Core Web API (.NET 8, C#)
+EcoScan is a full-stack web application that helps users understand the environmental impact of their clothing purchases.
+
+For this implementation, users select clothing items from a predefined list instead of uploading an image. This simplifies the application while allowing the core backend functionality, API design, and business logic to be fully demonstrated. The project has been designed so image recognition can be integrated later without major architectural changes.
+
+The application allows users to:
+
+- Select one or more clothing items.
+- Calculate the estimated carbon footprint.
+- Earn Eco Reward Points.
+- View sustainability offers based on earned points.
 
 ---
 
-## 🌱 Carbon Score Assumptions
+# 🎯 Project Objectives
 
-To calculate the environmental impact of each clothing item, approximate carbon scores are assigned based on the clothing type. These values are stored in an in-memory dictionary.
+- Build a clean and responsive React frontend.
+- Develop a RESTful ASP.NET Core Web API.
+- Calculate carbon footprint for selected clothing items.
+- Award eco-reward points based on purchases.
+- Display available sustainability offers.
+- Demonstrate clean architecture and scalable design.
+
+---
+
+# 🏗️ System Architecture
+
+```text
++----------------------+
+|   React Frontend     |
++----------+-----------+
+           |
+           | HTTP Requests
+           |
+           ▼
++----------------------+
+| ASP.NET Core Web API |
++----------+-----------+
+           |
+           |
+    +------+------+----------------+
+    |             |                |
+    ▼             ▼                ▼
+Carbon      Reward Points     Offers Service
+Calculator    Calculator
+```
+
+The frontend communicates with the backend using REST APIs. Business logic is contained entirely within the backend, while the frontend focuses on user interaction and displaying results.
+
+---
+
+# 📐 Application Design
+
+## Frontend
+
+The frontend is responsible for:
+
+- Allowing users to select clothing items.
+- Sending selected items to the backend.
+- Displaying:
+  - Selected items
+  - Individual carbon scores
+  - Total carbon footprint
+  - Eco reward points
+  - Available offers
+
+---
+
+## Backend
+
+The backend is separated into services to improve maintainability.
+
+| Service | Responsibility |
+|---------|----------------|
+| Clothing Service | Validates clothing items |
+| Carbon Calculator | Calculates carbon footprint |
+| Reward Calculator | Calculates eco reward points |
+| Offers Service | Returns available offers |
+
+---
+
+# 📡 API Design
+
+## Calculate Carbon Score
+
+**Endpoint**
+
+```http
+POST /api/ecoscan/calculate
+```
+
+### Request
+
+```json
+{
+  "items": [
+    "T-shirt",
+    "Jeans"
+  ]
+}
+```
+
+### Response
+
+```json
+{
+  "items": [
+    {
+      "name": "T-shirt",
+      "carbonScore": 5
+    },
+    {
+      "name": "Jeans",
+      "carbonScore": 10
+    }
+  ],
+  "totalCarbonScore": 15,
+  "ecoRewardPoints": 150,
+  "offers": [
+    "10% Off Sustainable Clothing"
+  ]
+}
+```
+
+---
+
+# 🗄️ Database Design (Future Implementation)
+
+This project currently uses an in-memory dictionary as specified in the challenge requirements. If expanded into a production application, SQL Server could be introduced using the following schema.
+
+## ClothingItems
+
+| Column | Type |
+|---------|------|
+| Id | int |
+| Name | nvarchar(100) |
+| CarbonScore | int |
+
+---
+
+## Offers
+
+| Column | Type |
+|---------|------|
+| Id | int |
+| OfferName | nvarchar(100) |
+| RequiredPoints | int |
+
+---
+
+## Users
+
+| Column | Type |
+|---------|------|
+| Id | int |
+| Username | nvarchar(100) |
+| TotalPoints | int |
+
+---
+
+# 🔧 Tech Stack
+
+- **Frontend:** React (Vite)
+- **Backend:** ASP.NET Core Web API (.NET 8, C#)
+- **Storage:** In-Memory Dictionary
+
+---
+
+# 🚀 Setup Instructions
+
+## Clone Repository
+
+```bash
+git clone https://github.com/yourusername/EcoScan.git
+cd EcoScan
+```
+
+---
+
+## Backend
+
+```bash
+cd EcoScanAPI
+dotnet restore
+dotnet run
+```
+
+Backend runs on:
+
+```
+https://localhost:5001
+```
+
+---
+
+## Frontend
+
+```bash
+cd ecoscan-client
+npm install
+npm run dev
+```
+
+Frontend runs on:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 🧪 Running Tests
+
+If unit tests are added:
+
+```bash
+dotnet test
+```
+
+Recommended tests include:
+
+- Carbon score calculation
+- Reward point calculation
+- API endpoint testing
+- Invalid input validation
+
+---
+
+# 🌱 Carbon Score Assumptions
+
+The application uses simple estimated carbon values stored in an in-memory dictionary.
 
 | 👕 Item | 🌍 Estimated Carbon Score (kg CO₂) |
 |---------|------------------------------------:|
@@ -22,32 +242,79 @@ To calculate the environmental impact of each clothing item, approximate carbon 
 
 ---
 
-## 🌟 Product & Technical Enhancements
-
-1. **Scaling:** Replace the in-memory storage with a SQL Server database and deploy the backend to a cloud platform.
-2. **Enhanced Eco-Score Model:** Calculate carbon scores using additional information such as clothing material, manufacturing location, and brand sustainability ratings.
-3. **User Experience Improvements:** Add a leaderboard, sustainability insights, and a history of previous scans to encourage user engagement.
-4. **API Integrations:** Integrate with external carbon footprint APIs to provide more accurate and up-to-date environmental data.
-
----
-
-## 🏗️ Application Flow
+# 🏗️ Application Flow
 
 ```mermaid
 flowchart TD
-    A[User Selects Clothing Items] --> B[React Frontend]
+    A[User Selects Clothing Items]
+    B[React Frontend]
+    C[ASP.NET Core Web API]
+    D[Validate Items]
+    E[Calculate Carbon Score]
+    F[Calculate Eco Reward Points]
+    G[Retrieve Available Offers]
+    H[Return JSON Response]
+    I[Display Results]
 
-    B --> C[ASP.NET Core Web API]
-
-    C --> D[Carbon Score Calculator]
-
-    D --> E[Calculate Total CO₂ Footprint]
-
-    E --> F[Calculate Eco Reward Points]
-
-    F --> G[Retrieve Available Offers]
-
-    G --> H[Return Results to Frontend]
-
-    H --> I[Display Carbon Score, Eco Points & Offers]
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
 ```
+
+---
+
+# 📂 Project Structure
+
+```
+EcoScan
+│
+├── EcoScanAPI
+│   ├── Controllers
+│   ├── Models
+│   ├── Services
+│   └── Program.cs
+│
+├── ecoscan-client
+│   ├── src
+│   ├── components
+│   ├── pages
+│   └── App.jsx
+│
+└── README.md
+```
+
+---
+
+# 🌟 Product & Technical Enhancements
+
+## Product Improvements
+
+- User authentication
+- Scan history
+- Sustainability dashboard
+- Monthly environmental reports
+- Clothing recommendations
+- Leaderboards
+- Carbon footprint comparisons
+
+---
+
+## Technical Improvements
+
+- SQL Server integration
+- Entity Framework Core
+- JWT Authentication
+- Docker support
+- Azure deployment
+- Redis caching
+- Logging with Serilog
+- CI/CD pipeline using GitHub Actions
+- External Carbon Footprint APIs
+- AI image recognition using GPT-4 Vision or another computer vision model
+
+---
