@@ -81,7 +81,159 @@ The backend is separated into services to improve maintainability.
 | Offers Service | Returns available offers |
 
 ---
+# 🖥️ Frontend Design
 
+The frontend is built using **React (Vite)** and is responsible for providing a simple and intuitive user interface.
+
+## Frontend Components
+
+| Component | Purpose |
+|----------|---------|
+| App | Main application entry point |
+| Navbar | Displays application title |
+| Clothing Selector | Allows users to choose one or more clothing items |
+| Results Card | Displays selected items and carbon scores |
+| Reward Card | Displays eco reward points |
+| Offers Card | Displays available offers |
+| API Service | Sends requests to the backend |
+
+### Frontend Folder Structure
+
+```text
+ecoscan-client/
+│
+├── src/
+│   ├── components/
+│   │   ├── ClothingSelector.jsx
+│   │   ├── ResultsCard.jsx
+│   │   ├── RewardCard.jsx
+│   │   └── OffersCard.jsx
+│   │
+│   ├── services/
+│   │   └── api.js
+│   │
+│   ├── App.jsx
+│   └── main.jsx
+│
+└── package.json
+```
+
+### Frontend Workflow
+
+```mermaid
+flowchart TD
+    A[User Opens Website]
+    B[Select Clothing Items]
+    C[Click Calculate]
+    D[Send POST Request]
+    E[Receive API Response]
+    F[Display Carbon Score]
+    G[Display Reward Points]
+    H[Display Offers]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    E --> G
+    E --> H
+```
+
+---
+
+# ⚙️ Backend Design
+
+The backend is built using **ASP.NET Core Web API (.NET 8)** and follows a layered architecture where each service has a single responsibility.
+
+## Backend Components
+
+| Component | Purpose |
+|----------|---------|
+| Controller | Receives HTTP requests |
+| Clothing Service | Validates clothing items |
+| Carbon Calculator | Calculates carbon score |
+| Reward Calculator | Calculates eco reward points |
+| Offers Service | Returns available offers |
+| Models | Stores request and response objects |
+
+### Backend Folder Structure
+
+```text
+EcoScanAPI/
+│
+├── Controllers/
+│   └── EcoScanController.cs
+│
+├── Models/
+│   ├── ClothingItem.cs
+│   ├── CalculationRequest.cs
+│   └── CalculationResponse.cs
+│
+├── Services/
+│   ├── CarbonCalculator.cs
+│   ├── RewardCalculator.cs
+│   └── OfferService.cs
+│
+├── Program.cs
+└── appsettings.json
+```
+
+### Backend Workflow
+
+```mermaid
+flowchart TD
+    A[Receive POST Request]
+    B[Validate Input]
+    C[Carbon Calculator]
+    D[Calculate Total Carbon Score]
+    E[Reward Calculator]
+    F[Calculate Eco Reward Points]
+    G[Offers Service]
+    H[Create Response]
+    I[Return JSON]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+```
+
+---
+
+# 🔄 Complete System Flow
+
+```mermaid
+flowchart LR
+
+User --> Frontend
+
+subgraph React Frontend
+A[Select Clothing Items]
+B[Send API Request]
+C[Display Results]
+end
+
+subgraph ASP.NET Core API
+D[Controller]
+E[Carbon Calculator]
+F[Reward Calculator]
+G[Offers Service]
+end
+
+Frontend --> A
+A --> B
+B --> D
+D --> E
+E --> F
+F --> G
+G --> C
+C --> User
+```
 # 📡 API Design
 
 ## Calculate Carbon Score
